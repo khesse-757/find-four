@@ -2,12 +2,23 @@ import { useGameStore } from '../../store/gameStore';
 import Column from './Column';
 import { ROWS, COLS } from '../../constants';
 
-export default function Board() {
+interface BoardProps {
+  isOnlineMode?: boolean;
+  localPlayer?: number | undefined;
+  sendMove?: (column: number) => void;
+}
+
+export default function Board({ 
+  isOnlineMode = false, 
+  localPlayer, 
+  sendMove 
+}: BoardProps) {
   const { 
     board, 
     dropPiece, 
     winner, 
-    isThinking 
+    isThinking,
+    currentPlayer 
   } = useGameStore();
 
   // Get winning cells for highlighting
@@ -18,10 +29,23 @@ export default function Board() {
   };
 
   const winningCells = getWinningCells();
-  const isDisabled = winner !== null || isThinking;
+  
+  // In online mode, only allow moves when it's the local player's turn
+  const isLocalPlayerTurn = isOnlineMode ? currentPlayer === localPlayer : true;
+  const isDisabled = winner !== null || isThinking || (isOnlineMode && !isLocalPlayerTurn);
 
   const handleDrop = (columnIndex: number) => {
+    // Only allow drop if it's the local player's turn (or not online mode)
+    if (isOnlineMode && !isLocalPlayerTurn) {
+      return;
+    }
+    
     dropPiece(columnIndex);
+    
+    // Send move to opponent in online mode
+    if (isOnlineMode && sendMove) {
+      sendMove(columnIndex);
+    }
   };
 
   // Convert board data to column format (each column is a vertical array)

@@ -11,6 +11,15 @@ const initialState: ConnectionState = {
   error: null
 };
 
+const generateRoomCode = (): string => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
+  for (let i = 0; i < 6; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
 export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   ...initialState,
 
@@ -29,13 +38,14 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
     });
     
     try {
-      // TODO: Implement PeerJS host creation
-      // For now, generate a mock room code
-      const roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      // Generate room code
+      const roomCode = generateRoomCode();
       
+      // TODO: Implement PeerJS host creation
+      // For now, simulate waiting for opponent
       set({
         peerId: roomCode,
-        connectionStatus: 'connected'
+        connectionStatus: 'connecting' // Stay in connecting until opponent joins
       });
       
       return roomCode;
@@ -57,9 +67,14 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
       throw new Error('Already connected or connecting');
     }
     
-    // Validate room code
-    if (!roomCode?.length || roomCode.length !== 6) {
-      throw new Error('Invalid room code');
+    // Validate room code format (6 alphanumeric characters)
+    if (!roomCode?.trim()) {
+      throw new Error('Room code is required');
+    }
+    
+    const cleanCode = roomCode.trim().toUpperCase();
+    if (cleanCode.length !== 6 || !/^[A-Z0-9]{6}$/.test(cleanCode)) {
+      throw new Error('Room code must be 6 alphanumeric characters');
     }
     
     set({ 
@@ -74,8 +89,8 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       set({
-        peerId: Math.random().toString(36).substring(2, 8),
-        remotePeerId: roomCode,
+        peerId: generateRoomCode(),
+        remotePeerId: cleanCode,
         connectionStatus: 'connected'
       });
     } catch (error) {
