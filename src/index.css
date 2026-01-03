@@ -2,12 +2,12 @@
 
 @layer base {
   html {
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    @apply font-mono;
   }
   
   body {
+    @apply min-h-screen;
     background-color: #0a0a0a;
     color: #ffb000;
-    min-height: 100vh;
   }
 }

@@ -13,7 +13,8 @@ const initialState: GameState = {
   winner: null,
   gameMode: 'menu',
   aiDifficulty: 'medium',
-  isThinking: false
+  isThinking: false,
+  selectingDifficulty: false
 };
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -76,6 +77,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   setAiDifficulty: (difficulty: AIDifficulty) => {
     set({ aiDifficulty: difficulty });
+  },
+
+  setSelectingDifficulty: (selecting: boolean) => {
+    set({ selectingDifficulty: selecting });
   },
 
   makeAiMove: async () => {

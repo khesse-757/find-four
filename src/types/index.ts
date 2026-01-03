@@ -19,6 +19,7 @@ export interface GameState {
   gameMode: GameMode;
   aiDifficulty: AIDifficulty;
   isThinking: boolean;
+  selectingDifficulty: boolean;
 }
 
 export interface ConnectionState {
@@ -35,6 +36,7 @@ export interface GameActions {
   setGameMode: (_mode: GameMode) => void;
   setAiDifficulty: (_difficulty: AIDifficulty) => void;
   makeAiMove: () => Promise<void>;
+  setSelectingDifficulty: (_selecting: boolean) => void;
 }
 
 export interface ConnectionActions {
