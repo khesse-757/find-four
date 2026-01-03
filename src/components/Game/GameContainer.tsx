@@ -14,6 +14,16 @@ export default function GameContainer() {
   const isOnlineMode = gameMode === 'online';
   const localPlayer = isOnlineMode ? (isHost ? 1 : 2) : undefined;
 
+  // Debug logging for online mode
+  if (isOnlineMode) {
+    console.log('GameContainer online mode:', { 
+      gameMode, 
+      isHost, 
+      localPlayer,
+      connectionStatus: useConnectionStore.getState().connectionStatus 
+    });
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-amber-500 p-8">
       <div className="space-y-8">
@@ -25,7 +35,10 @@ export default function GameContainer() {
         </div>
 
         {/* Game Status */}
-        <GameStatus />
+        <GameStatus 
+          isOnlineMode={isOnlineMode}
+          localPlayer={localPlayer}
+        />
 
         {/* Game Board */}
         <div className="flex justify-center">

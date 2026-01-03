@@ -197,7 +197,14 @@ export function usePeerConnection() {
   }, [connectionStore, setupConnectionHandlers]);
 
   const sendMove = useCallback((column: number): void => {
+    console.log('sendMove called with column:', column);
     const connection = connectionRef.current;
+    console.log('Connection status:', { 
+      connection: !!connection, 
+      open: connection?.open,
+      peer: connection?.peer 
+    });
+    
     if (connection?.open !== true) {
       console.warn('Cannot send move: no active connection');
       return;
@@ -208,7 +215,9 @@ export function usePeerConnection() {
         type: 'move',
         column
       };
+      console.log('Sending message to peer:', message);
       connection.send(message);
+      console.log('Message sent successfully');
     } catch (error) {
       console.error('Failed to send move:', error);
       connectionStore.setError('Failed to send move');

@@ -35,16 +35,29 @@ export default function Board({
   const isDisabled = winner !== null || isThinking || (isOnlineMode && !isLocalPlayerTurn);
 
   const handleDrop = (columnIndex: number) => {
+    console.log('handleDrop called:', { 
+      columnIndex, 
+      isOnlineMode, 
+      isLocalPlayerTurn, 
+      currentPlayer, 
+      localPlayer 
+    });
+    
     // Only allow drop if it's the local player's turn (or not online mode)
     if (isOnlineMode && !isLocalPlayerTurn) {
+      console.log('Move blocked - not local player turn');
       return;
     }
     
+    console.log('Dropping piece locally at column:', columnIndex);
     dropPiece(columnIndex);
     
     // Send move to opponent in online mode
     if (isOnlineMode && sendMove) {
+      console.log('Sending move to opponent:', columnIndex);
       sendMove(columnIndex);
+    } else if (isOnlineMode) {
+      console.warn('Online mode but no sendMove function provided');
     }
   };
 
