@@ -16,16 +16,16 @@ export default function GameContainer() {
 
   // Wrap sendMove to add logging
   const wrappedSendMove = (column: number) => {
-    console.log('GameContainer: About to call sendMove with column:', column);
-    console.log('GameContainer: sendMove function exists:', typeof peerConnection.sendMove === 'function');
+    console.log('GameContainer: About to call connectionStore sendMove with column:', column);
     console.log('GameContainer: isOnlineMode:', isOnlineMode);
     console.log('GameContainer: localPlayer:', localPlayer);
     
     try {
-      peerConnection.sendMove(column);
-      console.log('GameContainer: sendMove called successfully');
+      // Use connectionStore sendMove instead of hook sendMove
+      useConnectionStore.getState().sendMove({ column });
+      console.log('GameContainer: connectionStore sendMove called successfully');
     } catch (error) {
-      console.error('GameContainer: Error calling sendMove:', error);
+      console.error('GameContainer: Error calling connectionStore sendMove:', error);
     }
   };
 

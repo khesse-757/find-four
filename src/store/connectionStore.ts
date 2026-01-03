@@ -8,7 +8,8 @@ const initialState: ConnectionState = {
   remotePeerId: null,
   connectionStatus: 'disconnected',
   isHost: false,
-  error: null
+  error: null,
+  connection: null
 };
 
 const generateRoomCode = (): string => {
@@ -106,16 +107,26 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   sendMove: (move: Move): void => {
     const state = get();
     
+    console.log('ConnectionStore sendMove called with:', move);
+    console.log('Connection state:', { 
+      status: state.connectionStatus, 
+      connection: state.connection !== null,
+      connectionOpen: state.connection?.open === true 
+    });
+    
     // Only send if connected
-    if (state.connectionStatus !== 'connected') {
-      console.warn('Cannot send move: not connected');
+    if (state.connectionStatus !== 'connected' || state.connection?.open !== true) {
+      console.warn('Cannot send move: not connected or connection not open');
       return;
     }
     
     try {
-      // TODO: Implement PeerJS message sending
-      console.log('Sending move:', move);
+      const message = { type: 'move', column: move.column };
+      console.log('Sending move via connection:', message);
+      state.connection.send(message);
+      console.log('Move sent successfully');
     } catch (error) {
+      console.error('Error sending move:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to send move';
       set({ 
         connectionStatus: 'error',
@@ -143,5 +154,10 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
       error,
       connectionStatus: error !== null ? 'error' : 'disconnected'
     });
+  },
+
+  setConnection: (connection: unknown | null): void => {
+    console.log('ConnectionStore: Setting connection to:', connection);
+    set({ connection });
   }
 }));

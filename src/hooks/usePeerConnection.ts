@@ -112,6 +112,11 @@ export function usePeerConnection() {
       peer.on('connection', (connection) => {
         console.log('Incoming connection from:', connection.peer);
         connectionRef.current = connection;
+        console.log('Host: connectionRef.current set to:', connectionRef.current);
+        console.log('Host: connectionRef.current.open:', connectionRef.current?.open);
+        
+        // Store connection in Zustand store
+        connectionStore.setConnection(connection);
         
         // Set up connection handlers
         setupConnectionHandlers(connection);
@@ -160,6 +165,10 @@ export function usePeerConnection() {
 
         connection.on('open', () => {
           console.log('Guest connection opened - successfully connected to host:', roomCode);
+          
+          // Store connection in Zustand store
+          connectionStore.setConnection(connection);
+          
           setupConnectionHandlers(connection);
           
           // Update connection store
