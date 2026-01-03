@@ -91,6 +91,9 @@ Functional components only. Use named exports. Props interface defined above com
 ### Testing
 All files in `logic/` must have corresponding test files in `tests/logic/`. Test pure functions thoroughly. Cover edge cases: empty board, full column, horizontal/vertical/diagonal wins, draws.
 
+### Git Operations
+ALWAYS ask for user approval before running `git commit` or `git push` commands. Never commit or push without explicit permission.
+
 ## Terminal Theme
 
 Aesthetic: 1980s amber CRT monitor. Hacker vs defender concept.
