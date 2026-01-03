@@ -12,6 +12,8 @@ export type GameResult = Player | 'draw' | null;
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
+export type DisconnectReason = 'none' | 'opponent-left' | 'connection-lost' | 'self';
+
 export interface GameState {
   board: Board;
   currentPlayer: Player;
@@ -30,6 +32,7 @@ export interface ConnectionState {
   error: string | null;
   connection: any | null; // eslint-disable-line @typescript-eslint/no-explicit-any -- DataConnection from PeerJS
   rematchRequested: boolean;
+  disconnectReason: DisconnectReason;
 }
 
 export interface GameActions {
@@ -51,6 +54,7 @@ export interface ConnectionActions {
   requestRematch: () => void;
   acceptRematch: () => void;
   setRematchRequested: (_requested: boolean) => void;
+  setDisconnectReason: (_reason: DisconnectReason) => void;
 }
 
 export interface Move {

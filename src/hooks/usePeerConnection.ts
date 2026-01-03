@@ -29,6 +29,9 @@ export function usePeerConnection() {
 
   const disconnect = useCallback((): void => {
     try {
+      // Set disconnect reason to 'self' when manually disconnecting
+      connectionStore.setDisconnectReason('self');
+      
       if (connectionRef.current) {
         connectionRef.current.close();
         connectionRef.current = null;
@@ -88,6 +91,7 @@ export function usePeerConnection() {
 
     connection.on('close', () => {
       console.log('Connection closed with peer:', connection.peer);
+      connectionStore.setDisconnectReason('opponent-left');
       connectionStore.setError('Opponent disconnected');
       disconnect();
     });
@@ -95,6 +99,7 @@ export function usePeerConnection() {
     connection.on('error', (error) => {
       console.error('Connection error with peer:', connection.peer);
       console.error('Full error object:', error);
+      connectionStore.setDisconnectReason('connection-lost');
       connectionStore.setError('Connection error occurred');
     });
   }, [dropPiece, disconnect, connectionStore]);

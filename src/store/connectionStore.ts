@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { DataConnection } from 'peerjs';
-import type { ConnectionState, ConnectionActions, Move } from '../types';
+import type { ConnectionState, ConnectionActions, Move, DisconnectReason } from '../types';
 import { useGameStore } from './gameStore';
 
 interface ConnectionStore extends ConnectionState, ConnectionActions {}
@@ -12,7 +12,8 @@ const initialState: ConnectionState = {
   isHost: false,
   error: null,
   connection: null,
-  rematchRequested: false
+  rematchRequested: false,
+  disconnectReason: 'none'
 };
 
 const generateRoomCode = (): string => {
@@ -38,7 +39,8 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
     set({ 
       connectionStatus: 'connecting',
       isHost: true,
-      error: null 
+      error: null,
+      disconnectReason: 'none'
     });
     
     try {
@@ -84,7 +86,8 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
     set({ 
       connectionStatus: 'connecting',
       isHost: false,
-      error: null 
+      error: null,
+      disconnectReason: 'none'
     });
     
     try {
@@ -140,15 +143,18 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   },
 
   disconnect: (): void => {
+    const currentReason = get().disconnectReason;
     try {
       // TODO: Implement PeerJS cleanup
       console.log('Disconnecting...');
     } catch (error) {
       console.error('Error during disconnect:', error);
     } finally {
-      // Reset to initial state
+      // Reset to initial state but preserve disconnect reason if it was set by connection handlers
       set({
-        ...initialState
+        ...initialState,
+        // Keep the disconnect reason if it was set by connection error/close handlers
+        disconnectReason: currentReason === 'none' ? 'self' : currentReason
       });
     }
   },
@@ -219,5 +225,10 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   setRematchRequested: (requested: boolean): void => {
     console.log('Setting rematch requested to:', requested);
     set({ rematchRequested: requested });
+  },
+
+  setDisconnectReason: (reason: DisconnectReason): void => {
+    console.log('Setting disconnect reason to:', reason);
+    set({ disconnectReason: reason });
   }
 }));

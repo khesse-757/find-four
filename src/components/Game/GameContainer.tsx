@@ -4,10 +4,11 @@ import { usePeerConnection } from '../../hooks/usePeerConnection';
 import Board from '../Board/Board';
 import GameStatus from './GameStatus';
 import GameControls from './GameControls';
+import DisconnectOverlay from '../UI/DisconnectOverlay';
 
 export default function GameContainer() {
-  const { gameMode } = useGameStore();
-  const { isHost } = useConnectionStore();
+  const { gameMode, setGameMode } = useGameStore();
+  const { isHost, connectionStatus, disconnectReason } = useConnectionStore();
   const peerConnection = usePeerConnection();
 
   // In online mode, determine local player number
@@ -29,13 +30,28 @@ export default function GameContainer() {
     }
   };
 
+  // Check if we should show disconnect overlay
+  const shouldShowDisconnectOverlay = 
+    isOnlineMode && 
+    connectionStatus === 'disconnected' && 
+    disconnectReason !== 'none' && 
+    disconnectReason !== 'self';
+
+  const handleReturnToMenu = () => {
+    // Clear disconnect reason and return to menu
+    useConnectionStore.getState().setDisconnectReason('none');
+    setGameMode('menu');
+  };
+
   // Debug logging for online mode
   if (isOnlineMode) {
     console.log('GameContainer online mode:', { 
       gameMode, 
       isHost, 
       localPlayer,
-      connectionStatus: useConnectionStore.getState().connectionStatus 
+      connectionStatus,
+      disconnectReason,
+      shouldShowDisconnectOverlay
     });
   }
 
@@ -73,6 +89,14 @@ export default function GameContainer() {
           rematchRequested={peerConnection.rematchRequested}
         />
       </div>
+
+      {/* Disconnect Overlay */}
+      {shouldShowDisconnectOverlay && (
+        <DisconnectOverlay 
+          disconnectReason={disconnectReason}
+          onReturnToMenu={handleReturnToMenu}
+        />
+      )}
     </div>
   );
 }
