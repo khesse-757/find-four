@@ -150,7 +150,7 @@ export function usePeerConnection() {
   const joinGame = useCallback(async (roomCode: string): Promise<void> => {
     try {
       // Create peer with auto-generated ID (using public PeerJS server)
-      const peer = new Peer(undefined, peerConfig);
+      const peer = new Peer(peerConfig);
       peerRef.current = peer;
 
       peer.on('open', (id) => {
