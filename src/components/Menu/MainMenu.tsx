@@ -1,6 +1,9 @@
 import { useGameStore } from '../../store/gameStore';
 import Button from '../UI/Button';
 
+// Version number - update manually when releasing
+const version = '0.6.0';
+
 export default function MainMenu() {
   const { setGameMode, setSelectingDifficulty } = useGameStore();
 
@@ -17,7 +20,12 @@ export default function MainMenu() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-amber-500 p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-amber-500 p-8 relative">
+      {/* Version Number */}
+      <div className="absolute bottom-4 right-4 text-xs font-mono text-amber-600">
+        v{version}
+      </div>
+      
       <div className="text-center space-y-8">
         {/* Title */}
         <div className="space-y-4">
@@ -29,19 +37,43 @@ export default function MainMenu() {
           </p>
         </div>
 
+        {/* ASCII Art Game Board */}
+        <div className="py-6">
+          <pre className="text-amber-500 font-mono text-sm leading-tight">
+{`┌─┬─┬─┬─┬─┬─┬─┐
+│ │ │ │ │ │ │ │
+├─┼─┼─┼─┼─┼─┼─┤
+│ │ │`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│ │ │ │
+├─┼─┼─┼─┼─┼─┼─┤
+│ │`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│ │ │ │
+├─┼─┼─┼─┼─┼─┼─┤
+│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│ │ │
+├─┼─┼─┼─┼─┼─┼─┤
+│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-amber-400">●</span>{`│ │
+├─┼─┼─┼─┼─┼─┼─┤
+│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│
+└─┴─┴─┴─┴─┴─┴─┘`}
+          </pre>
+          <p className="text-xs font-mono text-amber-600 mt-2">
+            <span className="text-amber-400">● HACKER</span> vs <span className="text-cyan-400">○ DEFENDER</span>
+          </p>
+        </div>
+
         {/* Menu Buttons */}
-        <div className="space-y-4 pt-8 w-64">
-          <Button onClick={handleVsComputer}>
-            VS COMPUTER
-          </Button>
-          
-          <Button onClick={handleVsLocal}>
-            VS LOCAL
-          </Button>
-          
-          <Button onClick={handleVsOnline}>
-            VS ONLINE
-          </Button>
+        <div className="flex flex-col items-center space-y-4 pt-8">
+          <div className="w-64 space-y-4">
+            <Button onClick={handleVsComputer}>
+              VS COMPUTER
+            </Button>
+            
+            <Button onClick={handleVsLocal}>
+              VS LOCAL
+            </Button>
+            
+            <Button onClick={handleVsOnline}>
+              VS ONLINE
+            </Button>
+          </div>
         </div>
 
         {/* Footer */}

@@ -98,17 +98,17 @@ export default function OnlineSetup() {
             ONLINE MULTIPLAYER
           </h1>
           
-          <div className="space-y-4">
+          <div className="flex flex-col items-center space-y-4">
             <button
               onClick={handleCreateGame}
-              className="block w-64 px-6 py-3 border border-amber-500 text-amber-500 font-mono text-lg uppercase hover:bg-amber-500 hover:text-black transition-colors"
+              className="w-64 px-6 py-3 border border-amber-500 text-amber-500 font-mono text-lg uppercase hover:bg-amber-500 hover:text-black transition-colors"
             >
               Create Game
             </button>
             
             <button
               onClick={() => setMode('joining')}
-              className="block w-64 px-6 py-3 border border-cyan-500 text-cyan-500 font-mono text-lg uppercase hover:bg-cyan-500 hover:text-black transition-colors"
+              className="w-64 px-6 py-3 border border-cyan-500 text-cyan-500 font-mono text-lg uppercase hover:bg-cyan-500 hover:text-black transition-colors"
             >
               Join Game
             </button>

@@ -47,13 +47,13 @@ export default function DifficultySelect() {
         </div>
 
         {/* Difficulty Buttons */}
-        <div className="space-y-6 pt-8 w-64">
+        <div className="flex flex-col items-center space-y-6 pt-8">
           {difficulties.map((difficulty) => (
-            <div key={difficulty.level} className="space-y-2">
+            <div key={difficulty.level} className="space-y-2 w-64">
               <Button onClick={() => handleDifficultySelect(difficulty.level)}>
                 {difficulty.label}
               </Button>
-              <p className="text-sm font-mono text-amber-600">
+              <p className="text-sm font-mono text-amber-600 text-center">
                 {difficulty.description}
               </p>
             </div>
