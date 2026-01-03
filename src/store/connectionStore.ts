@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { DataConnection } from 'peerjs';
 import type { ConnectionState, ConnectionActions, Move } from '../types';
 
 interface ConnectionStore extends ConnectionState, ConnectionActions {}
@@ -106,16 +107,17 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
 
   sendMove: (move: Move): void => {
     const state = get();
+    const connection = state.connection as DataConnection | null;
     
     console.log('ConnectionStore sendMove called with:', move);
     console.log('Connection state:', { 
       status: state.connectionStatus, 
-      connection: state.connection !== null,
-      connectionOpen: state.connection?.open === true 
+      connection: connection !== null,
+      connectionOpen: connection?.open === true 
     });
     
     // Only send if connected
-    if (state.connectionStatus !== 'connected' || state.connection?.open !== true) {
+    if (state.connectionStatus !== 'connected' || connection?.open !== true) {
       console.warn('Cannot send move: not connected or connection not open');
       return;
     }
@@ -123,7 +125,7 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
     try {
       const message = { type: 'move', column: move.column };
       console.log('Sending move via connection:', message);
-      state.connection.send(message);
+      connection.send(message);
       console.log('Move sent successfully');
     } catch (error) {
       console.error('Error sending move:', error);
@@ -156,7 +158,7 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
     });
   },
 
-  setConnection: (connection: unknown | null): void => {
+  setConnection: (connection: any | null): void => { // eslint-disable-line @typescript-eslint/no-explicit-any
     console.log('ConnectionStore: Setting connection to:', connection);
     set({ connection });
   }

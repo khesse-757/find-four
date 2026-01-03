@@ -28,7 +28,7 @@ export interface ConnectionState {
   connectionStatus: ConnectionStatus;
   isHost: boolean;
   error: string | null;
-  connection: unknown | null; // DataConnection from PeerJS
+  connection: any | null; // eslint-disable-line @typescript-eslint/no-explicit-any -- DataConnection from PeerJS
 }
 
 export interface GameActions {
@@ -46,7 +46,7 @@ export interface ConnectionActions {
   sendMove: (_move: Move) => void;
   disconnect: () => void;
   setError: (_error: string | null) => void;
-  setConnection: (_connection: unknown | null) => void;
+  setConnection: (_connection: any | null) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface Move {
