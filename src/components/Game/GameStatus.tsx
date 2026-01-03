@@ -63,7 +63,7 @@ export default function GameStatus({
   return (
     <div className="text-center p-4 space-y-2">
       {/* Player Identity for Online Mode */}
-      {isOnlineMode && localPlayer && (
+      {isOnlineMode && localPlayer !== undefined && (
         <div className={`text-sm font-mono uppercase tracking-wider ${localPlayer === 1 ? 'text-amber-400' : 'text-cyan-400'}`}>
           You are {localPlayer === 1 ? 'HACKER' : 'DEFENDER'}
         </div>

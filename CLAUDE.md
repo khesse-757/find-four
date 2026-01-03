@@ -179,6 +179,49 @@ GitHub Actions workflows:
 1. `ci.yml`: On push/PR to main, run lint, typecheck, and tests
 2. `deploy.yml`: On push to main, build and deploy to GitHub Pages
 
+## Development Workflow
+
+### Making Changes
+When implementing features or fixing bugs, follow this workflow:
+
+1. **Make Code Changes**: Implement the feature/fix with proper testing
+
+2. **Bump Version**: Always bump version before committing:
+   - **Patch (x.x.X)**: Bug fixes, small improvements
+   - **Minor (x.X.0)**: New features, backwards compatible  
+   - **Major (X.0.0)**: Breaking changes
+   ```bash
+   ./bump-version.sh
+   # Select appropriate bump type (1=patch, 2=minor, 3=major)
+   ```
+
+3. **Run All Checks**: MANDATORY before every commit. All must pass:
+   ```bash
+   npm run typecheck
+   npm run lint
+   npm run test -- --run
+   ```
+   **IMPORTANT**: Use `-- --run` with test command to avoid watch mode
+
+4. **Commit Changes**: Only after all checks pass:
+   ```bash
+   git add .
+   git commit -m "Description of changes"
+   ```
+
+5. **Push to Deploy**: 
+   ```bash
+   git push origin main
+   ```
+
+**NEVER COMMIT WITHOUT RUNNING ALL CHECKS FIRST**
+
+### Version Bump Guidelines
+- **Always bump version** when making any code changes
+- **Patch**: Linting fixes, bug fixes, debugging improvements
+- **Minor**: New components, features, online multiplayer enhancements
+- **Major**: Breaking API changes, major refactors
+
 ## Version Management
 
 - VERSION file at root contains current version (e.g., 1.0.0)
