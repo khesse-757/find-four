@@ -35,7 +35,8 @@ export default function Board({
   const isDisabled = winner !== null || isThinking || (isOnlineMode && !isLocalPlayerTurn);
 
   const handleDrop = (columnIndex: number) => {
-    console.log('handleDrop called:', { 
+    console.log('Board: Column clicked!', columnIndex);
+    console.log('Board: handleDrop called:', { 
       columnIndex, 
       isOnlineMode, 
       isLocalPlayerTurn, 

@@ -17,8 +17,12 @@ export default function Column({
   winningCells 
 }: ColumnProps) {
   const handleClick = () => {
+    console.log('Column: Click detected on column', columnIndex, 'disabled:', disabled);
     if (!disabled) {
+      console.log('Column: Calling onDrop for column', columnIndex);
       onDrop(columnIndex);
+    } else {
+      console.log('Column: Click ignored - column disabled');
     }
   };
 

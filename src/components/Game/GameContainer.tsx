@@ -14,6 +14,21 @@ export default function GameContainer() {
   const isOnlineMode = gameMode === 'online';
   const localPlayer = isOnlineMode ? (isHost ? 1 : 2) : undefined;
 
+  // Wrap sendMove to add logging
+  const wrappedSendMove = (column: number) => {
+    console.log('GameContainer: About to call sendMove with column:', column);
+    console.log('GameContainer: sendMove function exists:', typeof peerConnection.sendMove === 'function');
+    console.log('GameContainer: isOnlineMode:', isOnlineMode);
+    console.log('GameContainer: localPlayer:', localPlayer);
+    
+    try {
+      peerConnection.sendMove(column);
+      console.log('GameContainer: sendMove called successfully');
+    } catch (error) {
+      console.error('GameContainer: Error calling sendMove:', error);
+    }
+  };
+
   // Debug logging for online mode
   if (isOnlineMode) {
     console.log('GameContainer online mode:', { 
@@ -45,7 +60,7 @@ export default function GameContainer() {
           <Board 
             isOnlineMode={isOnlineMode}
             localPlayer={localPlayer}
-            sendMove={peerConnection.sendMove}
+            {...(isOnlineMode && { sendMove: wrappedSendMove })}
           />
         </div>
 
