@@ -8,6 +8,18 @@ interface PeerMessage {
   column: number;
 }
 
+// PeerJS configuration with ICE servers for better WebRTC connectivity
+const peerConfig = {
+  debug: 2,
+  config: {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' }
+    ]
+  }
+};
+
 export function usePeerConnection() {
   const peerRef = useRef<Peer | null>(null);
   const connectionRef = useRef<DataConnection | null>(null);
@@ -15,17 +27,23 @@ export function usePeerConnection() {
   const connectionStore = useConnectionStore();
   const { dropPiece } = useGameStore();
 
-  // PeerJS configuration with ICE servers for better WebRTC connectivity
-  const peerConfig = {
-    debug: 2,
-    config: {
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' }
-      ]
+  const disconnect = useCallback((): void => {
+    try {
+      if (connectionRef.current) {
+        connectionRef.current.close();
+        connectionRef.current = null;
+      }
+      
+      if (peerRef.current) {
+        peerRef.current.destroy();
+        peerRef.current = null;
+      }
+      
+      connectionStore.disconnect();
+    } catch (error) {
+      console.error('Error during disconnect:', error);
     }
-  };
+  }, [connectionStore]);
 
   const setupConnectionHandlers = useCallback((connection: DataConnection) => {
     console.log('Setting up connection handlers for peer:', connection.peer);
@@ -75,7 +93,7 @@ export function usePeerConnection() {
       console.error('Full error object:', error);
       connectionStore.setError('Connection error occurred');
     });
-  }, [dropPiece]);
+  }, [dropPiece, disconnect, connectionStore]);
 
   const createGame = useCallback(async (roomCode: string): Promise<void> => {
     try {
@@ -180,7 +198,7 @@ export function usePeerConnection() {
 
   const sendMove = useCallback((column: number): void => {
     const connection = connectionRef.current;
-    if (!connection || !connection.open) {
+    if (connection?.open !== true) {
       console.warn('Cannot send move: no active connection');
       return;
     }
@@ -194,24 +212,6 @@ export function usePeerConnection() {
     } catch (error) {
       console.error('Failed to send move:', error);
       connectionStore.setError('Failed to send move');
-    }
-  }, [connectionStore]);
-
-  const disconnect = useCallback((): void => {
-    try {
-      if (connectionRef.current) {
-        connectionRef.current.close();
-        connectionRef.current = null;
-      }
-      
-      if (peerRef.current) {
-        peerRef.current.destroy();
-        peerRef.current = null;
-      }
-      
-      connectionStore.disconnect();
-    } catch (error) {
-      console.error('Error during disconnect:', error);
     }
   }, [connectionStore]);
 

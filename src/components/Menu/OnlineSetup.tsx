@@ -71,7 +71,7 @@ export default function OnlineSetup() {
       case 'connected':
         return 'CONNECTED';
       case 'error':
-        return error || 'CONNECTION ERROR';
+        return error ?? 'CONNECTION ERROR';
       default:
         return null;
     }
@@ -150,7 +150,7 @@ export default function OnlineSetup() {
             </div>
           </div>
 
-          {getStatusMessage() && (
+          {getStatusMessage() !== null && (
             <div className={`text-lg font-mono font-bold ${getStatusColor()}`}>
               {getStatusMessage()}
             </div>
@@ -199,7 +199,7 @@ export default function OnlineSetup() {
             </button>
           </div>
 
-          {getStatusMessage() && (
+          {getStatusMessage() !== null && (
             <div className={`text-lg font-mono font-bold ${getStatusColor()}`}>
               {getStatusMessage()}
             </div>
