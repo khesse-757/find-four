@@ -4,8 +4,8 @@ import { useConnectionStore } from '../store/connectionStore';
 import { useGameStore } from '../store/gameStore';
 
 interface PeerMessage {
-  type: 'move';
-  column: number;
+  type: 'move' | 'rematch' | 'rematch-accept';
+  column?: number;
 }
 
 // PeerJS configuration with ICE servers for better WebRTC connectivity
@@ -68,6 +68,14 @@ export function usePeerConnection() {
           // ALWAYS execute moves from remote peer - sender already validated it was their turn
           console.log('Dropping piece from remote peer at column:', message.column);
           dropPiece(message.column);
+        } else if (message.type === 'rematch') {
+          console.log('Received rematch request from opponent');
+          connectionStore.setRematchRequested(true);
+        } else if (message.type === 'rematch-accept') {
+          console.log('Received rematch acceptance from opponent');
+          const { resetGame } = useGameStore.getState();
+          resetGame();
+          connectionStore.setRematchRequested(false);
         }
       } catch (error) {
         console.error('Error processing received data:', error);
@@ -238,6 +246,9 @@ export function usePeerConnection() {
     sendMove,
     disconnect,
     isConnected,
-    error
+    error,
+    requestRematch: connectionStore.requestRematch,
+    acceptRematch: connectionStore.acceptRematch,
+    rematchRequested: connectionStore.rematchRequested
   };
 }

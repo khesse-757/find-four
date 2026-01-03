@@ -68,6 +68,9 @@ export default function GameContainer() {
         <GameControls 
           isOnlineMode={isOnlineMode}
           disconnect={peerConnection.disconnect}
+          requestRematch={peerConnection.requestRematch}
+          acceptRematch={peerConnection.acceptRematch}
+          rematchRequested={peerConnection.rematchRequested}
         />
       </div>
     </div>

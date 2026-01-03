@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { DataConnection } from 'peerjs';
 import type { ConnectionState, ConnectionActions, Move } from '../types';
+import { useGameStore } from './gameStore';
 
 interface ConnectionStore extends ConnectionState, ConnectionActions {}
 
@@ -10,7 +11,8 @@ const initialState: ConnectionState = {
   connectionStatus: 'disconnected',
   isHost: false,
   error: null,
-  connection: null
+  connection: null,
+  rematchRequested: false
 };
 
 const generateRoomCode = (): string => {
@@ -161,5 +163,61 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   setConnection: (connection: any | null): void => { // eslint-disable-line @typescript-eslint/no-explicit-any
     console.log('ConnectionStore: Setting connection to:', connection);
     set({ connection });
+  },
+
+  requestRematch: (): void => {
+    const state = get();
+    const connection = state.connection as DataConnection | null;
+    
+    console.log('Requesting rematch from opponent');
+    
+    // Only send if connected
+    if (state.connectionStatus !== 'connected' || connection?.open !== true) {
+      console.warn('Cannot request rematch: not connected');
+      return;
+    }
+    
+    try {
+      const message = { type: 'rematch' };
+      console.log('Sending rematch request:', message);
+      connection.send(message);
+      console.log('Rematch request sent successfully');
+    } catch (error) {
+      console.error('Error sending rematch request:', error);
+    }
+  },
+
+  acceptRematch: (): void => {
+    const state = get();
+    const connection = state.connection as DataConnection | null;
+    
+    console.log('Accepting rematch request');
+    
+    // Only send if connected
+    if (state.connectionStatus !== 'connected' || connection?.open !== true) {
+      console.warn('Cannot accept rematch: not connected');
+      return;
+    }
+    
+    try {
+      const message = { type: 'rematch-accept' };
+      console.log('Sending rematch acceptance:', message);
+      connection.send(message);
+      console.log('Rematch acceptance sent successfully');
+      
+      // Reset local game state
+      const { resetGame } = useGameStore.getState();
+      resetGame();
+      
+      // Clear rematch requested state
+      set({ rematchRequested: false });
+    } catch (error) {
+      console.error('Error accepting rematch:', error);
+    }
+  },
+
+  setRematchRequested: (requested: boolean): void => {
+    console.log('Setting rematch requested to:', requested);
+    set({ rematchRequested: requested });
   }
 }));
