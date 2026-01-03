@@ -133,6 +133,14 @@ export function getBestMove(board: Board, aiPlayer: Player, difficulty: AIDiffic
   const validColumns = getValidColumns(board);
   if (validColumns.length === 0) throw new Error('No valid moves available');
   
+  // Check for immediate winning moves first
+  for (const col of validColumns) {
+    const newBoard = dropPiece(board, col, aiPlayer);
+    if (checkWin(newBoard).winner === aiPlayer) {
+      return col;
+    }
+  }
+  
   const depth = AI_DEPTHS[difficulty];
   const randomness = AI_RANDOMNESS[difficulty];
   
