@@ -1,0 +1,75 @@
+{
+  "name": "Find Four Development",
+  "image": "node:20-alpine",
+  
+  // Features to install
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  
+  // Configure tool-specific properties
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "ash",
+        "typescript.preferences.includePackageJsonAutoImports": "auto",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "eslint.workingDirectories": ["."],
+        "tailwindCSS.includeLanguages": {
+          "typescript": "javascript",
+          "typescriptreact": "javascript"
+        }
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "formulahendry.auto-rename-tag",
+        "christian-kohler.npm-intellisense",
+        "ms-vscode.vscode-json"
+      ]
+    }
+  },
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally
+  "forwardPorts": [5173],
+  
+  // Configure port forwarding behavior
+  "portsAttributes": {
+    "5173": {
+      "label": "Vite Dev Server",
+      "requireLocalPort": false,
+      "onAutoForward": "notify"
+    }
+  },
+
+  // Use 'postCreateCommand' to run commands after the container is created
+  "postCreateCommand": "npm ci",
+
+  // Use 'postStartCommand' to run commands after the container starts
+  "postStartCommand": "echo 'Container started! Run npm run dev to start the development server.'",
+
+  // Configure container user
+  "remoteUser": "node",
+  "updateRemoteUserUID": true,
+
+  // Mount local git config and SSH keys for seamless git operations
+  "mounts": [
+    "source=${localEnv:HOME}/.gitconfig,target=/home/node/.gitconfig,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.ssh,target=/home/node/.ssh,type=bind,consistency=cached"
+  ],
+
+  // Set environment variables
+  "containerEnv": {
+    "NPM_CONFIG_COLOR": "always"
+  },
+
+  // Specify additional build context
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+}
