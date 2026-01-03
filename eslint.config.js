@@ -6,9 +6,13 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import parser from '@typescript-eslint/parser';
 
 export default [
+  {
+    ignores: ['dist/', 'node_modules/']
+  },
   js.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['*.config.ts'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
