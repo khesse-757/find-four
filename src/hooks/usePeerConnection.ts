@@ -54,24 +54,20 @@ export function usePeerConnection() {
         const message = data as PeerMessage;
         
         if (message.type === 'move' && typeof message.column === 'number') {
-          // Get fresh state from stores to avoid stale closure
+          // Get fresh state from stores for debugging
           const { currentPlayer } = useGameStore.getState();
           const { isHost } = useConnectionStore.getState();
           
-          console.log('Processing move:', { 
+          console.log('Processing remote move:', { 
             column: message.column, 
             currentPlayer, 
             isHost,
-            shouldProcess: (isHost && currentPlayer === 2) || (!isHost && currentPlayer === 1)
+            note: 'Always executing remote moves (sender already validated turn)'
           });
           
-          // Only process moves if it's the remote player's turn
-          if ((isHost && currentPlayer === 2) || (!isHost && currentPlayer === 1)) {
-            console.log('Dropping piece at column:', message.column);
-            dropPiece(message.column);
-          } else {
-            console.log('Ignoring move - not remote player turn');
-          }
+          // ALWAYS execute moves from remote peer - sender already validated it was their turn
+          console.log('Dropping piece from remote peer at column:', message.column);
+          dropPiece(message.column);
         }
       } catch (error) {
         console.error('Error processing received data:', error);

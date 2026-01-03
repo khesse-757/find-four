@@ -54,7 +54,7 @@ export default function Board({
     
     // Send move to opponent in online mode
     if (isOnlineMode && sendMove) {
-      console.log('Sending move to opponent:', columnIndex);
+      console.log('Calling sendMove with column:', columnIndex);
       sendMove(columnIndex);
     } else if (isOnlineMode) {
       console.warn('Online mode but no sendMove function provided');
