@@ -1,8 +1,6 @@
 import { useGameStore } from '../../store/gameStore';
 import Button from '../UI/Button';
-
-// Version number - update manually when releasing
-const version = '0.6.1';
+import packageJson from '../../../package.json';
 
 export default function MainMenu() {
   const { setGameMode, setSelectingDifficulty } = useGameStore();
@@ -23,7 +21,7 @@ export default function MainMenu() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-amber-500 p-8 relative">
       {/* Version Number */}
       <div className="absolute bottom-4 right-4 text-xs font-mono text-amber-600">
-        v{version}
+        v{packageJson.version}
       </div>
       
       <div className="text-center space-y-8">
