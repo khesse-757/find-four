@@ -38,6 +38,7 @@ export default [
       '@typescript-eslint/strict-boolean-expressions': 'error',
       '@typescript-eslint/prefer-nullish-coalescing': 'error',
       '@typescript-eslint/prefer-optional-chain': 'error',
+      'no-unused-vars': 'off', // Turn off base rule for TypeScript files
     },
   },
 ];

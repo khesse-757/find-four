@@ -4,13 +4,13 @@ export type CellValue = 0 | Player;
 
 export type Board = CellValue[][];
 
-export type GameMode = 'ai' | 'local' | 'online';
+export type GameMode = 'menu' | 'ai' | 'local' | 'online';
 
 export type AIDifficulty = 'easy' | 'medium' | 'hard';
 
 export type GameResult = Player | 'draw' | null;
 
-export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected';
+export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
 export interface GameState {
   board: Board;
@@ -18,6 +18,7 @@ export interface GameState {
   winner: GameResult;
   gameMode: GameMode;
   aiDifficulty: AIDifficulty;
+  isThinking: boolean;
 }
 
 export interface ConnectionState {
@@ -25,6 +26,23 @@ export interface ConnectionState {
   remotePeerId: string | null;
   connectionStatus: ConnectionStatus;
   isHost: boolean;
+  error: string | null;
+}
+
+export interface GameActions {
+  dropPiece: (_column: number) => void;
+  resetGame: () => void;
+  setGameMode: (_mode: GameMode) => void;
+  setAiDifficulty: (_difficulty: AIDifficulty) => void;
+  makeAiMove: () => Promise<void>;
+}
+
+export interface ConnectionActions {
+  createGame: () => Promise<string>;
+  joinGame: (_roomCode: string) => Promise<void>;
+  sendMove: (_move: Move) => void;
+  disconnect: () => void;
+  setError: (_error: string | null) => void;
 }
 
 export interface Move {
