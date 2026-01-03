@@ -29,27 +29,45 @@ export function usePeerConnection() {
 
   const disconnect = useCallback((): void => {
     try {
+      console.log('=== MANUAL DISCONNECT INITIATED ===');
+      console.log('Current connection state:', {
+        connectionExists: !!connectionRef.current,
+        connectionOpen: connectionRef.current?.open,
+        peerExists: !!peerRef.current,
+        peerDestroyed: peerRef.current?.destroyed
+      });
+      
       // Set disconnect reason to 'self' when manually disconnecting
       connectionStore.setDisconnectReason('self');
       
       if (connectionRef.current) {
+        console.log('Closing data connection...');
         connectionRef.current.close();
         connectionRef.current = null;
       }
       
       if (peerRef.current) {
+        console.log('Destroying peer...');
         peerRef.current.destroy();
         peerRef.current = null;
       }
       
+      console.log('Calling connectionStore.disconnect()...');
       connectionStore.disconnect();
+      console.log('Manual disconnect completed');
     } catch (error) {
       console.error('Error during disconnect:', error);
     }
   }, [connectionStore]);
 
   const setupConnectionHandlers = useCallback((connection: DataConnection) => {
+    console.log('=== SETTING UP CONNECTION HANDLERS ===');
     console.log('Setting up connection handlers for peer:', connection.peer);
+    console.log('Connection state:', { 
+      open: connection.open, 
+      type: connection.type,
+      reliable: connection.reliable
+    });
     
     connection.on('data', (data: unknown) => {
       try {
@@ -90,14 +108,23 @@ export function usePeerConnection() {
     });
 
     connection.on('close', () => {
+      console.log('=== CONNECTION CLOSE EVENT FIRED ===');
       console.log('Connection closed with peer:', connection.peer);
+      console.log('Connection state before close:', { 
+        open: connection.open, 
+        type: connection.type,
+        metadata: connection.metadata 
+      });
       connectionStore.setDisconnectReason('opponent-left');
       connectionStore.setError('Opponent disconnected');
       disconnect();
     });
 
     connection.on('error', (error) => {
+      console.log('=== CONNECTION ERROR EVENT FIRED ===');
       console.error('Connection error with peer:', connection.peer);
+      console.error('Error type:', error.type);
+      console.error('Error message:', error.message);
       console.error('Full error object:', error);
       connectionStore.setDisconnectReason('connection-lost');
       connectionStore.setError('Connection error occurred');
@@ -129,6 +156,8 @@ export function usePeerConnection() {
         console.log('Host: connectionRef.current.open:', connectionRef.current?.open);
         
         // Store connection in Zustand store
+        console.log('=== STORING CONNECTION IN ZUSTAND (HOST) ===');
+        console.log('Connection to store:', connection.peer);
         connectionStore.setConnection(connection);
         
         // Set up connection handlers
@@ -145,13 +174,25 @@ export function usePeerConnection() {
       });
 
       peer.on('error', (error) => {
+        console.log('=== HOST PEER ERROR EVENT ===');
         console.error('Host peer error:', error);
+        console.error('Error type:', error.type);
+        console.error('Error message:', error.message);
         console.error('Full error object:', error);
         connectionStore.setError(`Connection failed: ${error.message || error}`);
       });
 
       peer.on('disconnected', () => {
+        console.log('=== HOST PEER DISCONNECTED FROM SIGNALING SERVER ===');
         console.log('Peer disconnected from signaling server');
+        // Note: This doesn't mean the data connection closed, just the signaling connection
+      });
+
+      peer.on('close', () => {
+        console.log('=== HOST PEER CONNECTION CLOSED ===');
+        console.log('Peer connection closed completely');
+        connectionStore.setDisconnectReason('connection-lost');
+        connectionStore.setError('Peer connection closed');
       });
 
     } catch (error) {
@@ -180,6 +221,8 @@ export function usePeerConnection() {
           console.log('Guest connection opened - successfully connected to host:', roomCode);
           
           // Store connection in Zustand store
+          console.log('=== STORING CONNECTION IN ZUSTAND (GUEST) ===');
+          console.log('Connection to store:', connection.peer);
           connectionStore.setConnection(connection);
           
           setupConnectionHandlers(connection);
@@ -198,13 +241,25 @@ export function usePeerConnection() {
       });
 
       peer.on('error', (error) => {
+        console.log('=== GUEST PEER ERROR EVENT ===');
         console.error('Guest peer error:', error);
+        console.error('Error type:', error.type);
+        console.error('Error message:', error.message);
         console.error('Full error object:', error);
         connectionStore.setError(`Failed to join game: ${error.message || error}`);
       });
 
       peer.on('disconnected', () => {
+        console.log('=== GUEST PEER DISCONNECTED FROM SIGNALING SERVER ===');
         console.log('Peer disconnected from signaling server');
+        // Note: This doesn't mean the data connection closed, just the signaling connection
+      });
+
+      peer.on('close', () => {
+        console.log('=== GUEST PEER CONNECTION CLOSED ===');
+        console.log('Peer connection closed completely');
+        connectionStore.setDisconnectReason('connection-lost');
+        connectionStore.setError('Peer connection closed');
       });
 
     } catch (error) {

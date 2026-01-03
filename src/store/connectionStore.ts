@@ -167,7 +167,13 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   },
 
   setConnection: (connection: any | null): void => { // eslint-disable-line @typescript-eslint/no-explicit-any
-    console.log('ConnectionStore: Setting connection to:', connection);
+    console.log('=== CONNECTIONSTORE: SETTING CONNECTION ===');
+    console.log('ConnectionStore: Setting connection to:', connection?.peer ?? 'null');
+    console.log('Connection state:', { 
+      open: connection?.open ?? 'undefined', 
+      type: connection?.type ?? 'undefined',
+      reliable: connection?.reliable ?? 'undefined'
+    });
     set({ connection });
   },
 
