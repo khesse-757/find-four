@@ -31,6 +31,7 @@ export interface ConnectionState {
   isHost: boolean;
   error: string | null;
   connection: any | null; // eslint-disable-line @typescript-eslint/no-explicit-any -- DataConnection from PeerJS
+  peer: any | null; // eslint-disable-line @typescript-eslint/no-explicit-any -- Peer from PeerJS
   rematchRequested: boolean;
   disconnectReason: DisconnectReason;
 }
@@ -51,6 +52,7 @@ export interface ConnectionActions {
   disconnect: () => void;
   setError: (_error: string | null) => void;
   setConnection: (_connection: any | null) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
+  setPeer: (_peer: any | null) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
   requestRematch: () => void;
   acceptRematch: () => void;
   setRematchRequested: (_requested: boolean) => void;

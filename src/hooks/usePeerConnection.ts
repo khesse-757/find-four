@@ -21,7 +21,6 @@ const peerConfig = {
 };
 
 export function usePeerConnection() {
-  const peerRef = useRef<Peer | null>(null);
   const connectionRef = useRef<DataConnection | null>(null);
   
   const connectionStore = useConnectionStore();
@@ -30,26 +29,27 @@ export function usePeerConnection() {
   const disconnect = useCallback((): void => {
     try {
       console.log('=== MANUAL DISCONNECT INITIATED ===');
+      const { peer, connection, setDisconnectReason } = connectionStore;
+      
       console.log('Current connection state:', {
-        connectionExists: !!connectionRef.current,
-        connectionOpen: connectionRef.current?.open,
-        peerExists: !!peerRef.current,
-        peerDestroyed: peerRef.current?.destroyed
+        connectionExists: connection !== null,
+        connectionOpen: connection?.open ?? 'undefined',
+        peerExists: peer !== null,
+        peerDestroyed: peer?.destroyed ?? 'undefined'
       });
       
       // Set disconnect reason to 'self' when manually disconnecting
-      connectionStore.setDisconnectReason('self');
+      setDisconnectReason('self');
       
-      if (connectionRef.current) {
+      if (connection !== null) {
         console.log('Closing data connection...');
-        connectionRef.current.close();
+        connection.close();
         connectionRef.current = null;
       }
       
-      if (peerRef.current) {
+      if (peer !== null) {
         console.log('Destroying peer...');
-        peerRef.current.destroy();
-        peerRef.current = null;
+        peer.destroy();
       }
       
       console.log('Calling connectionStore.disconnect()...');
@@ -136,7 +136,10 @@ export function usePeerConnection() {
       // Create peer with room code as ID (using public PeerJS server)
       const peer = new Peer(roomCode, peerConfig);
       
-      peerRef.current = peer;
+      // Store peer in Zustand store
+      console.log('=== STORING PEER IN ZUSTAND (HOST) ===');
+      console.log('Peer to store:', peer.id);
+      connectionStore.setPeer(peer);
 
       peer.on('open', (id) => {
         console.log('Host peer opened with ID:', id);
@@ -206,7 +209,11 @@ export function usePeerConnection() {
     try {
       // Create peer with auto-generated ID (using public PeerJS server)
       const peer = new Peer(peerConfig);
-      peerRef.current = peer;
+      
+      // Store peer in Zustand store
+      console.log('=== STORING PEER IN ZUSTAND (GUEST) ===');
+      console.log('Peer to store:', 'auto-generated');
+      connectionStore.setPeer(peer);
 
       peer.on('open', (id) => {
         console.log('Guest peer opened with ID:', id);

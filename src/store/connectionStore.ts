@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { DataConnection } from 'peerjs';
+import Peer, { type DataConnection } from 'peerjs';
 import type { ConnectionState, ConnectionActions, Move, DisconnectReason } from '../types';
 import { useGameStore } from './gameStore';
 
@@ -12,6 +12,7 @@ const initialState: ConnectionState = {
   isHost: false,
   error: null,
   connection: null,
+  peer: null,
   rematchRequested: false,
   disconnectReason: 'none'
 };
@@ -236,5 +237,16 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   setDisconnectReason: (reason: DisconnectReason): void => {
     console.log('Setting disconnect reason to:', reason);
     set({ disconnectReason: reason });
+  },
+
+  setPeer: (peer: Peer | null): void => {
+    console.log('=== CONNECTIONSTORE: SETTING PEER ===');
+    console.log('ConnectionStore: Setting peer to:', peer?.id ?? 'null');
+    console.log('Peer state:', { 
+      id: peer?.id ?? 'undefined',
+      open: peer?.open ?? 'undefined',
+      destroyed: peer?.destroyed ?? 'undefined'
+    });
+    set({ peer });
   }
 }));
