@@ -2,7 +2,7 @@ import { useGameStore } from '../../store/gameStore';
 import Button from '../UI/Button';
 
 // Version number - update manually when releasing
-const version = '0.6.0';
+const version = '0.6.1';
 
 export default function MainMenu() {
   const { setGameMode, setSelectingDifficulty } = useGameStore();

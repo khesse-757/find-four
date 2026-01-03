@@ -141,6 +141,15 @@ export function getBestMove(board: Board, aiPlayer: Player, difficulty: AIDiffic
     }
   }
   
+  // Check for opponent's immediate winning moves and block them
+  const opponent = aiPlayer === PLAYERS.HACKER ? PLAYERS.DEFENDER : PLAYERS.HACKER;
+  for (const col of validColumns) {
+    const opponentBoard = dropPiece(board, col, opponent);
+    if (checkWin(opponentBoard).winner === opponent) {
+      return col; // Block opponent's winning move
+    }
+  }
+  
   const depth = AI_DEPTHS[difficulty];
   const randomness = AI_RANDOMNESS[difficulty];
   
