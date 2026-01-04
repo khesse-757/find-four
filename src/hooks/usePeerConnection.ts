@@ -201,7 +201,13 @@ export function usePeerConnection() {
       peer.on('close', () => {
         console.log('=== HOST PEER CONNECTION CLOSED ===');
         console.log('Peer connection closed completely');
-        connectionStore.setDisconnectReason('connection-lost');
+        // Only set reason if not already set (e.g., by opponent-left)
+        const currentReason = useConnectionStore.getState().disconnectReason;
+        if (currentReason === 'none') {
+          connectionStore.setDisconnectReason('connection-lost');
+        } else {
+          console.log('Preserving existing disconnect reason:', currentReason);
+        }
         connectionStore.setError('Peer connection closed');
       });
 
@@ -272,7 +278,13 @@ export function usePeerConnection() {
       peer.on('close', () => {
         console.log('=== GUEST PEER CONNECTION CLOSED ===');
         console.log('Peer connection closed completely');
-        connectionStore.setDisconnectReason('connection-lost');
+        // Only set reason if not already set (e.g., by opponent-left)
+        const currentReason = useConnectionStore.getState().disconnectReason;
+        if (currentReason === 'none') {
+          connectionStore.setDisconnectReason('connection-lost');
+        } else {
+          console.log('Preserving existing disconnect reason:', currentReason);
+        }
         connectionStore.setError('Peer connection closed');
       });
 
