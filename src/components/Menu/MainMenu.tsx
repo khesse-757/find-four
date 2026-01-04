@@ -19,7 +19,8 @@ export default function MainMenu() {
       gameMode: 'menu',
       aiDifficulty: 'medium',
       isThinking: false,
-      selectingDifficulty: false
+      selectingDifficulty: false,
+      wrongTurnAttempt: 0
     });
     useConnectionStore.getState().disconnect();
     setShowResetDialog(false);

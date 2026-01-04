@@ -22,6 +22,7 @@ export interface GameState {
   aiDifficulty: AIDifficulty;
   isThinking: boolean;
   selectingDifficulty: boolean;
+  wrongTurnAttempt: number;
 }
 
 export interface ConnectionState {
@@ -43,6 +44,7 @@ export interface GameActions {
   setAiDifficulty: (_difficulty: AIDifficulty) => void;
   makeAiMove: () => Promise<void>;
   setSelectingDifficulty: (_selecting: boolean) => void;
+  triggerWrongTurn: () => void;
 }
 
 export interface ConnectionActions {

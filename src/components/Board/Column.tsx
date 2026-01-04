@@ -9,21 +9,16 @@ interface ColumnProps {
   winningCells: Position[];
 }
 
-export default function Column({ 
-  columnIndex, 
-  cells, 
-  onDrop, 
+export default function Column({
+  columnIndex,
+  cells,
+  onDrop,
   disabled = false,
-  winningCells 
+  winningCells
 }: ColumnProps) {
   const handleClick = () => {
-    console.log('Column: Click detected on column', columnIndex, 'disabled:', disabled);
-    if (!disabled) {
-      console.log('Column: Calling onDrop for column', columnIndex);
-      onDrop(columnIndex);
-    } else {
-      console.log('Column: Click ignored - column disabled');
-    }
+    // Always call onDrop - let parent handle wrong turn feedback
+    onDrop(columnIndex);
   };
 
   const isWinningCell = (rowIndex: number): boolean => {

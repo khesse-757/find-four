@@ -14,7 +14,8 @@ const initialState: GameState = {
   gameMode: 'menu',
   aiDifficulty: 'medium',
   isThinking: false,
-  selectingDifficulty: false
+  selectingDifficulty: false,
+  wrongTurnAttempt: 0
 };
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -123,5 +124,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       console.error('AI move failed:', error);
       set({ isThinking: false });
     }
+  },
+
+  triggerWrongTurn: () => {
+    // Use timestamp to trigger re-render even if called multiple times quickly
+    set({ wrongTurnAttempt: Date.now() });
   }
 }));

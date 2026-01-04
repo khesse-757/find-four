@@ -35,30 +35,23 @@ export default function Board({
   const isDisabled = winner !== null || isThinking || (isOnlineMode && !isLocalPlayerTurn);
 
   const handleDrop = (columnIndex: number) => {
-    console.log('Board: Column clicked!', columnIndex);
-    console.log('Board: handleDrop called:', { 
-      columnIndex, 
-      isOnlineMode, 
-      isLocalPlayerTurn, 
-      currentPlayer, 
-      localPlayer 
-    });
-    
-    // Only allow drop if it's the local player's turn (or not online mode)
-    if (isOnlineMode && !isLocalPlayerTurn) {
-      console.log('Move blocked - not local player turn');
+    // Don't allow moves if game is over or AI is thinking
+    if (winner !== null || isThinking) {
       return;
     }
-    
-    console.log('Dropping piece locally at column:', columnIndex);
+
+    // In online mode, check if it's local player's turn
+    if (isOnlineMode && !isLocalPlayerTurn) {
+      // Trigger wrong turn feedback
+      useGameStore.getState().triggerWrongTurn();
+      return;
+    }
+
     dropPiece(columnIndex);
-    
+
     // Send move to opponent in online mode
     if (isOnlineMode && sendMove) {
-      console.log('Calling sendMove with column:', columnIndex);
       sendMove(columnIndex);
-    } else if (isOnlineMode) {
-      console.warn('Online mode but no sendMove function provided');
     }
   };
 
