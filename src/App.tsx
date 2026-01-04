@@ -7,7 +7,7 @@ import GameContainer from './components/Game/GameContainer';
 
 export default function App() {
   const { gameMode, selectingDifficulty } = useGameStore();
-  const { connectionStatus } = useConnectionStore();
+  const { connectionStatus, disconnectReason } = useConnectionStore();
 
   // Show difficulty selection when user clicked VS COMPUTER
   if (selectingDifficulty) {
@@ -20,7 +20,9 @@ export default function App() {
   }
 
   // Show online setup for online mode when not connected
-  if (gameMode === 'online' && connectionStatus !== 'connected') {
+  // BUT keep showing GameContainer if there's a disconnect reason to display
+  const hasDisconnectToShow = disconnectReason !== 'none' && disconnectReason !== 'self';
+  if (gameMode === 'online' && connectionStatus !== 'connected' && !hasDisconnectToShow) {
     return <OnlineSetup />;
   }
 

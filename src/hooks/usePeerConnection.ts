@@ -164,15 +164,19 @@ export function usePeerConnection() {
         connectionRef.current = connection;
         console.log('Host: connectionRef.current set to:', connectionRef.current);
         console.log('Host: connectionRef.current.open:', connectionRef.current?.open);
-        
+
         // Store connection in Zustand store
         console.log('=== STORING CONNECTION IN ZUSTAND (HOST) ===');
         console.log('Connection to store:', connection.peer);
         connectionStore.setConnection(connection);
-        
+
         // Set up connection handlers
         setupConnectionHandlers(connection);
-        
+
+        // Reset game state for fresh start
+        console.log('Host: Resetting game for new connection');
+        useGameStore.getState().resetGame();
+
         // Update connection store to 'connected'
         connectionStore.setError(null);
         // Manually update to connected state since we have a connection
@@ -239,14 +243,18 @@ export function usePeerConnection() {
 
         connection.on('open', () => {
           console.log('Guest connection opened - successfully connected to host:', roomCode);
-          
+
           // Store connection in Zustand store
           console.log('=== STORING CONNECTION IN ZUSTAND (GUEST) ===');
           console.log('Connection to store:', connection.peer);
           connectionStore.setConnection(connection);
-          
+
           setupConnectionHandlers(connection);
-          
+
+          // Reset game state for fresh start
+          console.log('Guest: Resetting game for new connection');
+          useGameStore.getState().resetGame();
+
           // Update connection store
           connectionStore.joinGame(roomCode).catch((error) => {
             console.error('Error in connectionStore.joinGame:', error);

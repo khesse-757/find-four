@@ -1,9 +1,31 @@
+import { useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
+import { useConnectionStore } from '../../store/connectionStore';
 import Button from '../UI/Button';
 import packageJson from '../../../package.json';
 
 export default function MainMenu() {
   const { setGameMode, setSelectingDifficulty } = useGameStore();
+  const [showResetDialog, setShowResetDialog] = useState(false);
+
+  const handleResetData = () => {
+    // Clear all localStorage
+    localStorage.clear();
+    // Reset Zustand stores to initial state
+    useGameStore.setState({
+      board: useGameStore.getState().board.map(row => row.map(() => 0)),
+      currentPlayer: 1,
+      winner: null,
+      gameMode: 'menu',
+      aiDifficulty: 'medium',
+      isThinking: false,
+      selectingDifficulty: false
+    });
+    useConnectionStore.getState().disconnect();
+    setShowResetDialog(false);
+    // Reload page for clean state
+    window.location.reload();
+  };
 
   const handleVsComputer = () => {
     setSelectingDifficulty(true);
@@ -19,10 +41,46 @@ export default function MainMenu() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-amber-500 p-8 relative">
-      {/* Version Number */}
-      <div className="absolute bottom-4 right-4 text-xs font-mono text-amber-600">
+      {/* Version Number - Click to access reset */}
+      <button
+        onClick={() => setShowResetDialog(true)}
+        className="absolute bottom-4 right-4 text-xs font-mono text-amber-600 hover:text-amber-400 transition-colors"
+        title="Reset game data"
+      >
         v{packageJson.version}
-      </div>
+      </button>
+
+      {/* Reset Data Dialog */}
+      {showResetDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+          <div className="bg-black border-2 border-amber-500 p-8 max-w-sm w-full mx-4 text-center">
+            <div className="border border-amber-600 p-6">
+              <div className="space-y-6">
+                <div className="text-amber-500 font-mono text-xl uppercase tracking-wider">
+                  RESET DATA?
+                </div>
+                <div className="text-amber-600 font-mono text-sm">
+                  This will clear all saved game data and reload the page.
+                </div>
+                <div className="flex gap-4 justify-center">
+                  <button
+                    onClick={handleResetData}
+                    className="px-6 py-3 border border-red-400 text-red-400 font-mono text-sm uppercase hover:bg-red-400 hover:text-black transition-colors"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    onClick={() => setShowResetDialog(false)}
+                    className="px-6 py-3 border border-amber-500 text-amber-500 font-mono text-sm uppercase hover:bg-amber-500 hover:text-black transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="text-center space-y-8">
         {/* Title */}
