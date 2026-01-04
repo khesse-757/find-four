@@ -29,17 +29,24 @@ export function usePeerConnection() {
   const disconnect = useCallback((): void => {
     try {
       console.log('=== MANUAL DISCONNECT INITIATED ===');
-      const { peer, connection, setDisconnectReason } = connectionStore;
-      
+      const { peer, connection, setDisconnectReason, disconnectReason } = connectionStore;
+
       console.log('Current connection state:', {
         connectionExists: connection !== null,
         connectionOpen: connection?.open ?? 'undefined',
         peerExists: peer !== null,
-        peerDestroyed: peer?.destroyed ?? 'undefined'
+        peerDestroyed: peer?.destroyed ?? 'undefined',
+        currentDisconnectReason: disconnectReason
       });
-      
-      // Set disconnect reason to 'self' when manually disconnecting
-      setDisconnectReason('self');
+
+      // Only set to 'self' if no other reason was already set (e.g., 'opponent-left')
+      // This preserves reasons set by connection event handlers
+      if (disconnectReason === 'none') {
+        console.log('Setting disconnect reason to self (was none)');
+        setDisconnectReason('self');
+      } else {
+        console.log('Preserving existing disconnect reason:', disconnectReason);
+      }
       
       if (connection !== null) {
         console.log('Closing data connection...');

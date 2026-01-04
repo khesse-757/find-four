@@ -43,17 +43,22 @@ export default function GameContainer() {
     setGameMode('menu');
   };
 
-  // Debug logging for online mode
-  if (isOnlineMode) {
-    console.log('GameContainer online mode:', { 
-      gameMode, 
-      isHost, 
-      localPlayer,
-      connectionStatus,
-      disconnectReason,
-      shouldShowDisconnectOverlay
-    });
-  }
+  // Debug logging for online mode and disconnect overlay
+  console.log('=== GameContainer Debug ===', {
+    gameMode,
+    isOnlineMode,
+    connectionStatus,
+    disconnectReason,
+    shouldShowDisconnectOverlay,
+    isHost,
+    localPlayer,
+    overlayConditions: {
+      isOnlineMode,
+      isDisconnected: connectionStatus === 'disconnected',
+      reasonNotNone: disconnectReason !== 'none',
+      reasonNotSelf: disconnectReason !== 'self'
+    }
+  });
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-amber-500 p-8">
