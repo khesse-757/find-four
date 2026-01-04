@@ -40,9 +40,9 @@ export default function GameStatus({
 
   const isMyTurn = isOnlineMode ? currentPlayer === localPlayer : true;
 
-  const getWinMessage = () => {
+  const getWinMessage = (): { main: string; sub: string; isWin: boolean | null } => {
     if (winner === 'draw') {
-      return { main: 'DEADLOCK', sub: 'Neither side prevails' };
+      return { main: 'DEADLOCK', sub: 'Neither side prevails', isWin: null };
     }
 
     const hackerWon = winner === 1;
@@ -51,19 +51,19 @@ export default function GameStatus({
       const localPlayerWon = winner === localPlayer;
       if (localPlayerWon) {
         return hackerWon
-          ? { main: 'BREACH SUCCESSFUL', sub: 'System compromised' }
-          : { main: 'SYSTEM SECURED', sub: 'Threat neutralized' };
+          ? { main: 'YOU WIN', sub: 'Breach successful', isWin: true }
+          : { main: 'YOU WIN', sub: 'System secured', isWin: true };
       } else {
         return hackerWon
-          ? { main: 'BREACH DETECTED', sub: 'Defenses failed' }
-          : { main: 'ACCESS DENIED', sub: 'Attack repelled' };
+          ? { main: 'YOU LOSE', sub: 'Breach detected', isWin: false }
+          : { main: 'YOU LOSE', sub: 'Access denied', isWin: false };
       }
     }
 
-    // Local/AI mode
+    // Local/AI mode - show who won
     return hackerWon
-      ? { main: 'BREACH SUCCESSFUL', sub: 'System compromised' }
-      : { main: 'SYSTEM SECURED', sub: 'Threat neutralized' };
+      ? { main: 'HACKER WINS', sub: 'Breach successful', isWin: null }
+      : { main: 'DEFENDER WINS', sub: 'System secured', isWin: null };
   };
 
   const getTurnMessage = () => {
@@ -112,7 +112,8 @@ export default function GameStatus({
 
   // Render win/lose/draw state
   if (winner !== null) {
-    const { main, sub } = getWinMessage();
+    const { main, sub, isWin } = getWinMessage();
+    const mainColor = isWin === true ? 'text-green-400' : isWin === false ? 'text-red-400' : getStatusColor();
     return (
       <div className="text-center p-4 space-y-2">
         {isOnlineMode && localPlayer !== undefined && (
@@ -120,7 +121,7 @@ export default function GameStatus({
             You were {localPlayer === 1 ? 'HACKER' : 'DEFENDER'}
           </div>
         )}
-        <div className={`text-xl font-mono font-bold tracking-wider ${getStatusColor()}`}>
+        <div className={`text-xl font-mono font-bold tracking-wider ${mainColor}`}>
           {main}
         </div>
         <div className="text-sm font-mono text-amber-600 uppercase tracking-wide">
