@@ -100,19 +100,19 @@ export default function MainMenu() {
 {`┌─┬─┬─┬─┬─┬─┬─┐
 │ │ │ │ │ │ │ │
 ├─┼─┼─┼─┼─┼─┼─┤
-│ │ │`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│ │ │ │
+│ │ │`}<span className="text-amber-400">█</span>{`│`}<span className="text-cyan-400">░</span>{`│ │ │ │
 ├─┼─┼─┼─┼─┼─┼─┤
-│ │`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│ │ │ │
+│ │`}<span className="text-cyan-400">░</span>{`│`}<span className="text-amber-400">█</span>{`│`}<span className="text-cyan-400">░</span>{`│ │ │ │
 ├─┼─┼─┼─┼─┼─┼─┤
-│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│ │ │
+│`}<span className="text-amber-400">█</span>{`│`}<span className="text-cyan-400">░</span>{`│`}<span className="text-amber-400">█</span>{`│`}<span className="text-amber-400">█</span>{`│`}<span className="text-cyan-400">░</span>{`│ │ │
 ├─┼─┼─┼─┼─┼─┼─┤
-│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-amber-400">●</span>{`│ │
+│`}<span className="text-cyan-400">░</span>{`│`}<span className="text-amber-400">█</span>{`│`}<span className="text-cyan-400">░</span>{`│`}<span className="text-cyan-400">░</span>{`│`}<span className="text-amber-400">█</span>{`│`}<span className="text-amber-400">█</span>{`│ │
 ├─┼─┼─┼─┼─┼─┼─┤
-│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-amber-400">●</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-cyan-400">○</span>{`│`}<span className="text-amber-400">●</span>{`│
+│`}<span className="text-amber-400">█</span>{`│`}<span className="text-cyan-400">░</span>{`│`}<span className="text-amber-400">█</span>{`│`}<span className="text-amber-400">█</span>{`│`}<span className="text-cyan-400">░</span>{`│`}<span className="text-cyan-400">░</span>{`│`}<span className="text-amber-400">█</span>{`│
 └─┴─┴─┴─┴─┴─┴─┘`}
           </pre>
           <p className="text-xs font-mono text-amber-600 mt-2">
-            <span className="text-amber-400">● HACKER</span> vs <span className="text-cyan-400">○ DEFENDER</span>
+            <span className="text-amber-400">█ HACKER</span> vs <span className="text-cyan-400">░ DEFENDER</span>
           </p>
         </div>
 
