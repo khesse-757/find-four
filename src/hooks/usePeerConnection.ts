@@ -4,7 +4,7 @@ import { useConnectionStore } from '../store/connectionStore';
 import { useGameStore } from '../store/gameStore';
 
 interface PeerMessage {
-  type: 'move' | 'rematch' | 'rematch-accept';
+  type: 'move' | 'rematch' | 'rematch-accept' | 'rematch-decline';
   column?: number;
 }
 
@@ -98,12 +98,16 @@ export function usePeerConnection() {
           dropPiece(message.column);
         } else if (message.type === 'rematch') {
           console.log('Received rematch request from opponent');
-          connectionStore.setRematchRequested(true);
+          connectionStore.setRematchReceived(true);
         } else if (message.type === 'rematch-accept') {
           console.log('Received rematch acceptance from opponent');
           const { resetGame } = useGameStore.getState();
           resetGame();
+          connectionStore.clearRematchState();
+        } else if (message.type === 'rematch-decline') {
+          console.log('Received rematch decline from opponent');
           connectionStore.setRematchRequested(false);
+          connectionStore.setRematchDeclined(true);
         }
       } catch (error) {
         console.error('Error processing received data:', error);
@@ -343,6 +347,10 @@ export function usePeerConnection() {
     error,
     requestRematch: connectionStore.requestRematch,
     acceptRematch: connectionStore.acceptRematch,
-    rematchRequested: connectionStore.rematchRequested
+    declineRematch: connectionStore.declineRematch,
+    rematchRequested: connectionStore.rematchRequested,
+    rematchReceived: connectionStore.rematchReceived,
+    rematchDeclined: connectionStore.rematchDeclined,
+    clearRematchState: connectionStore.clearRematchState
   };
 }

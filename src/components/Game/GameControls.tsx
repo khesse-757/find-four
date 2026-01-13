@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import ConfirmDisconnectOverlay from '../UI/ConfirmDisconnectOverlay';
 
@@ -7,7 +7,11 @@ interface GameControlsProps {
   disconnect?: () => void;
   requestRematch?: () => void;
   acceptRematch?: () => void;
+  declineRematch?: () => void;
   rematchRequested?: boolean;
+  rematchReceived?: boolean;
+  rematchDeclined?: boolean;
+  clearRematchState?: () => void;
 }
 
 export default function GameControls({
@@ -15,10 +19,25 @@ export default function GameControls({
   disconnect,
   requestRematch,
   acceptRematch,
-  rematchRequested = false
+  declineRematch,
+  rematchRequested = false,
+  rematchReceived = false,
+  rematchDeclined = false,
+  clearRematchState
 }: GameControlsProps) {
   const { resetGame, setGameMode, winner } = useGameStore();
   const [showConfirmDisconnect, setShowConfirmDisconnect] = useState(false);
+
+  // Auto-clear the declined message after 3 seconds
+  useEffect(() => {
+    if (rematchDeclined && clearRematchState) {
+      const timer = setTimeout(() => {
+        clearRematchState();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [rematchDeclined, clearRematchState]);
 
   const handleNewGame = () => {
     resetGame();
@@ -45,21 +64,54 @@ export default function GameControls({
     setShowConfirmDisconnect(false);
   };
 
+  // Determine if Play Again button should show
+  const showPlayAgain = isOnlineMode &&
+    winner !== null &&
+    !rematchRequested &&
+    !rematchReceived &&
+    !rematchDeclined;
+
   return (
     <>
       <div className="flex flex-col gap-4 items-center">
-        {/* Rematch request notification */}
-        {isOnlineMode && rematchRequested && (
+        {/* Waiting for opponent to respond to my rematch request */}
+        {isOnlineMode && rematchRequested && !rematchDeclined && (
+          <div className="text-center">
+            <div className="text-amber-500 font-mono text-sm uppercase animate-pulse">
+              WAITING FOR OPPONENT...
+            </div>
+          </div>
+        )}
+
+        {/* Rematch declined notification */}
+        {isOnlineMode && rematchDeclined && (
+          <div className="text-center">
+            <div className="text-red-400 font-mono text-sm uppercase">
+              REMATCH DECLINED
+            </div>
+          </div>
+        )}
+
+        {/* Opponent wants rematch notification */}
+        {isOnlineMode && rematchReceived && (
           <div className="text-center">
             <div className="text-cyan-400 font-mono text-sm uppercase mb-2">
-              Opponent wants rematch
+              OPPONENT WANTS REMATCH
             </div>
-            <button
-              onClick={acceptRematch}
-              className="px-6 py-2 border border-green-500 text-green-500 font-mono text-sm uppercase hover:bg-green-500 hover:text-black transition-colors"
-            >
-              Accept
-            </button>
+            <div className="flex gap-2 justify-center">
+              <button
+                onClick={acceptRematch}
+                className="px-6 py-2 border border-green-500 text-green-500 font-mono text-sm uppercase hover:bg-green-500 hover:text-black transition-colors"
+              >
+                Accept
+              </button>
+              <button
+                onClick={declineRematch}
+                className="px-6 py-2 border border-red-400 text-red-400 font-mono text-sm uppercase hover:bg-red-400 hover:text-black transition-colors"
+              >
+                Decline
+              </button>
+            </div>
           </div>
         )}
 
@@ -76,7 +128,7 @@ export default function GameControls({
           )}
 
           {/* Play Again for online mode when game is over */}
-          {isOnlineMode && winner !== null && !rematchRequested && (
+          {showPlayAgain && (
             <button
               onClick={requestRematch}
               className="px-6 py-2 border border-amber-500 text-amber-500 font-mono text-sm uppercase hover:bg-amber-500 hover:text-black transition-colors"

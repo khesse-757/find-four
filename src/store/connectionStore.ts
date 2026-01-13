@@ -14,6 +14,8 @@ const initialState: ConnectionState = {
   connection: null,
   peer: null,
   rematchRequested: false,
+  rematchReceived: false,
+  rematchDeclined: false,
   disconnectReason: 'none'
 };
 
@@ -181,20 +183,23 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   requestRematch: (): void => {
     const state = get();
     const connection = state.connection as DataConnection | null;
-    
+
     console.log('Requesting rematch from opponent');
-    
+
     // Only send if connected
     if (state.connectionStatus !== 'connected' || connection?.open !== true) {
       console.warn('Cannot request rematch: not connected');
       return;
     }
-    
+
     try {
       const message = { type: 'rematch' };
       console.log('Sending rematch request:', message);
       connection.send(message);
       console.log('Rematch request sent successfully');
+
+      // Set local state to show waiting UI
+      set({ rematchRequested: true, rematchDeclined: false });
     } catch (error) {
       console.error('Error sending rematch request:', error);
     }
@@ -203,35 +208,75 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   acceptRematch: (): void => {
     const state = get();
     const connection = state.connection as DataConnection | null;
-    
+
     console.log('Accepting rematch request');
-    
+
     // Only send if connected
     if (state.connectionStatus !== 'connected' || connection?.open !== true) {
       console.warn('Cannot accept rematch: not connected');
       return;
     }
-    
+
     try {
       const message = { type: 'rematch-accept' };
       console.log('Sending rematch acceptance:', message);
       connection.send(message);
       console.log('Rematch acceptance sent successfully');
-      
+
       // Reset local game state
       const { resetGame } = useGameStore.getState();
       resetGame();
-      
-      // Clear rematch requested state
-      set({ rematchRequested: false });
+
+      // Clear all rematch state
+      set({ rematchRequested: false, rematchReceived: false, rematchDeclined: false });
     } catch (error) {
       console.error('Error accepting rematch:', error);
+    }
+  },
+
+  declineRematch: (): void => {
+    const state = get();
+    const connection = state.connection as DataConnection | null;
+
+    console.log('Declining rematch request');
+
+    // Only send if connected
+    if (state.connectionStatus !== 'connected' || connection?.open !== true) {
+      console.warn('Cannot decline rematch: not connected');
+      return;
+    }
+
+    try {
+      const message = { type: 'rematch-decline' };
+      console.log('Sending rematch decline:', message);
+      connection.send(message);
+      console.log('Rematch decline sent successfully');
+
+      // Clear received state
+      set({ rematchReceived: false });
+    } catch (error) {
+      console.error('Error declining rematch:', error);
     }
   },
 
   setRematchRequested: (requested: boolean): void => {
     console.log('Setting rematch requested to:', requested);
     set({ rematchRequested: requested });
+  },
+
+  setRematchReceived: (received: boolean): void => {
+    console.log('Setting rematch received to:', received);
+    set({ rematchReceived: received });
+  },
+
+  setRematchDeclined: (declined: boolean): void => {
+    console.log('Setting rematch declined to:', declined);
+    set({ rematchDeclined: declined });
+  },
+
+  clearRematchState: (): void => {
+    console.log('Clearing all rematch state');
+    set({ rematchRequested: false, rematchReceived: false, rematchDeclined: false });
   },
 
   setDisconnectReason: (reason: DisconnectReason): void => {

@@ -86,12 +86,16 @@ export default function GameContainer() {
         </div>
 
         {/* Game Controls */}
-        <GameControls 
+        <GameControls
           isOnlineMode={isOnlineMode}
           disconnect={peerConnection.disconnect}
           requestRematch={peerConnection.requestRematch}
           acceptRematch={peerConnection.acceptRematch}
+          declineRematch={peerConnection.declineRematch}
           rematchRequested={peerConnection.rematchRequested}
+          rematchReceived={peerConnection.rematchReceived}
+          rematchDeclined={peerConnection.rematchDeclined}
+          clearRematchState={peerConnection.clearRematchState}
         />
       </div>
 
